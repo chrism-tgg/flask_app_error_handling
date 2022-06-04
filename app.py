@@ -17,17 +17,27 @@ def index():
     return render_template('index.html')
 
 # URL variable idx to determine where messages will be displayed
+# Use app.logger to log errors.
+# app.logger.debug(): For detailed information about the event.
+# app.logger.info(): Confirmation that things are working as expected.
+# app.logger.warning(): Indication that something unexpected happened (such as “disk space low”), but the application is working as expected.
+# app.logger.error(): An error occurred in some part of the application.
+# app.logger.critical(): A critical error; the entire application might stop working.
 @app.route('/messages/<int:idx>')
 # define three messages.
 def message(idx):
+    # log event that is working as expected with info
+    app.logger.info('Building the messages list...')
     messages = ['Message Zero', 'Message One', 'Message Two']
-    # Error handling with try...except clause
     try:
+        # detailed info with debug level
+        app.logger.debug('Get message with index: {}'.format(idx))
         return render_template('message.html', message=messages[idx])
     except IndexError:
+        # log index number of error
+        app.logger.error('Index {} is causing an IndexError'.format(idx))
         abort(404)
 
-# ...
 @app.route('/500')
 def error500():
     abort(500)
